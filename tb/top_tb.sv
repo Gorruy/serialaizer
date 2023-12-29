@@ -27,4 +27,11 @@ module top_tb;
       #5 clk = !clk;
     end
 
+    initial
+    begin
+      #15 data <= 16'd10;
+      data_mod <= 4'b0;
+      data_val <= 1;
+    end
+
 endmodule

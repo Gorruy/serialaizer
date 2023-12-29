@@ -19,7 +19,7 @@ module serializer (
   logic [15:0] data_buf;
 
   always_ff @(posedge clk_i) begin
-    if (!srst_i) state <= IDLE_S;
+    if (srst_i) state <= IDLE_S;
     else state <= next_state;
   end
 
@@ -27,48 +27,49 @@ module serializer (
     next_state = state;
     case (state)
       IDLE_S: begin
-        if (data_val_i) next_state = WORK_S;
+        if (data_mod_i == 1 || data_mod_i == 2) next_state = IDLE_S;
+        else if (data_val_i) next_state = WORK_S;
         else next_state = IDLE_S;
       end
 
       WORK_S: begin
-        if (counter == 15) next_state = IDLE_S;
+        if (counter == 4'd15) next_state = IDLE_S;
         else next_state = WORK_S;
       end
     endcase
   end
 
+  // Set counter and data buffer
+  always_ff @(posedge clk_i) begin
+    if (state == IDLE_S && next_state == WORK_S) begin
+      if (!data_mod_i) begin
+        counter = 0;
+        data_buf <= data_i;
+      end else begin
+        counter = 4'd16 - data_mod_i;
+        for (int i = 0; i < 16; i++) begin
+          data_buf[i] <= data_i[15-i];
+        end
+      end
+    end else if (next_state == WORK_S || state == WORK_S) counter <= counter + 4'b1;
+  end
+
   always_comb begin
-    data_buf       = '0;
     ser_data_o     = '0;
     ser_data_val_o = 0;
     busy_o         = 0;
-    counter        = 0;
     case (state)
       IDLE_S: begin
-        if (data_val_i) begin
-          if (!data_mod_i) counter = 0;
-          else counter = data_mod_i;
-          data_buf       = data_i;
-          ser_data_val_o = 1;
-          ser_data_o     = data_buf[4'b15-counter];
-          busy_o         = 1;
-          counter        = 0;
-        end else begin
-          data_buf       = '0;
-          ser_data_o     = '0;
-          ser_data_val_o = 0;
-          busy_o         = 0;
-          counter        = 0;
-        end
+        ser_data_o     = '0;
+        ser_data_val_o = 0;
+        busy_o         = 0;
       end
 
       WORK_S: begin
-        counter        = counter + 4'b1;
         busy_o         = 1;
         ser_data_val_o = 1;
-        ser_data_o     = data_buf[4'b15-counter];
-        data_buf       = data_buf;
+        // Msb go first
+        ser_data_o     = data_buf[4'd15-counter];
       end
     endcase
   end

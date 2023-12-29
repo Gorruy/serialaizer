@@ -1,12 +1,12 @@
-Fitter Status : Successful - Fri Dec 29 18:06:38 2023
+Fitter Status : Successful - Fri Dec 29 20:47:59 2023
 Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 Revision Name : serializer
 Top-level Entity Name : serializer
 Family : Cyclone V
 Device : 5CSEBA4U19C8
 Timing Models : Final
-Logic utilization (in ALMs) : 7 / 15,880 ( < 1 % )
-Total registers : 1
+Logic utilization (in ALMs) : 24 / 15,880 ( < 1 % )
+Total registers : 21
 Total pins : 26 / 205 ( 13 % )
 Total virtual pins : 0
 Total block memory bits : 0 / 2,764,800 ( 0 % )
