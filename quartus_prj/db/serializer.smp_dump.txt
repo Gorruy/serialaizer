@@ -1,5 +1,0 @@
-
-State Machine - |serializer|state
-Name state.WORK_S 
-state.IDLE_S 0 
-state.WORK_S 1 
