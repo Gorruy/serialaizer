@@ -1,7 +1,7 @@
-/quartus_prj/db/
-/quartus_prj/incremental_db/
-/quartus_prj/output_files/
-/quartus_prj/simulation/
+db/
+incremental_db/
+output_files/
+simulation/
 *.txt
 *.vwf
 *.bak
