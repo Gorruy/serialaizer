@@ -5,4 +5,4 @@ simulation/
 *.txt
 *.vwf
 *.bak
-.vscode/
+.vscode/settings.json
