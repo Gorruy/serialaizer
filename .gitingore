@@ -1,8 +1,8 @@
-/quartus_prj/db/*
-/quartus_prj/incremental_db/*
-/quartus_prj/output_files/*
-/quartus_prj/simulation/*
+/quartus_prj/db/
+/quartus_prj/incremental_db/
+/quartus_prj/output_files/
+/quartus_prj/simulation/
 *.txt
 *.vwf
 *.bak
-.vscode/settings.json
+.vscode/
