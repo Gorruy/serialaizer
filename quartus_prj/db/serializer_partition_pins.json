@@ -1,0 +1,113 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "ser_data_o",
+					"strict" : false
+				},
+				{
+					"name" : "ser_data_val_o",
+					"strict" : false
+				},
+				{
+					"name" : "busy_o",
+					"strict" : false
+				},
+				{
+					"name" : "data_val_i",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[15]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[14]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[13]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[12]",
+					"strict" : false
+				},
+				{
+					"name" : "data_mod_i[0]",
+					"strict" : false
+				},
+				{
+					"name" : "data_mod_i[1]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[11]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[10]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[9]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[8]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[7]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[6]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[5]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[4]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[3]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[2]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[1]",
+					"strict" : false
+				},
+				{
+					"name" : "data_i[0]",
+					"strict" : false
+				},
+				{
+					"name" : "data_mod_i[2]",
+					"strict" : false
+				},
+				{
+					"name" : "data_mod_i[3]",
+					"strict" : false
+				},
+				{
+					"name" : "srst_i",
+					"strict" : false
+				},
+				{
+					"name" : "clk_i",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

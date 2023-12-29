@@ -1,0 +1,38 @@
+|serializer
+clk_i => state~1.DATAIN
+srst_i => state.OUTPUTSELECT
+srst_i => state.OUTPUTSELECT
+data_i[0] => Mux0.IN4
+data_i[1] => Mux0.IN5
+data_i[2] => Mux0.IN6
+data_i[3] => Mux0.IN7
+data_i[4] => Mux0.IN8
+data_i[5] => Mux0.IN9
+data_i[6] => Mux0.IN10
+data_i[7] => Mux0.IN11
+data_i[8] => Mux0.IN12
+data_i[9] => Mux0.IN13
+data_i[10] => Mux0.IN14
+data_i[11] => Mux0.IN15
+data_i[12] => Mux0.IN16
+data_i[13] => Mux0.IN17
+data_i[14] => Mux0.IN18
+data_i[15] => Mux0.IN19
+data_mod_i[0] => WideNor0.IN0
+data_mod_i[0] => counter.DATAA
+data_mod_i[1] => WideNor0.IN1
+data_mod_i[1] => counter.DATAA
+data_mod_i[2] => WideNor0.IN2
+data_mod_i[2] => counter.DATAA
+data_mod_i[3] => WideNor0.IN3
+data_mod_i[3] => counter.DATAA
+data_val_i => ser_data_o.OUTPUTSELECT
+data_val_i => next_state.WORK_S.DATAB
+data_val_i => ser_data_val_o.DATAB
+data_val_i => busy_o.DATAB
+data_val_i => next_state.IDLE_S.DATAB
+ser_data_o <= ser_data_o.DB_MAX_OUTPUT_PORT_TYPE
+ser_data_val_o <= ser_data_val_o.DB_MAX_OUTPUT_PORT_TYPE
+busy_o <= busy_o.DB_MAX_OUTPUT_PORT_TYPE
+
+
