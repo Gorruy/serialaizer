@@ -1,0 +1,68 @@
+Determining the location of the ModelSim executable...
+
+Using: /home/vladimir/intelFPGA_lite/18.1/modelsim_ase/linuxaloem/
+
+To specify a ModelSim executable directory, select: Tools -> Options -> EDA Tool Options
+Note: if both ModelSim-Altera and ModelSim executables are available, ModelSim-Altera will be used.
+
+**** Generating the ModelSim Testbench ****
+
+quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off serializer -c serializer --vector_source="/home/vladimir/NTC/serialaizer/quartus_prj/Waveform.vwf" --testbench_file="/home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim/Waveform.vwf.vt"
+
+Info: *******************************************************************Info: Running Quartus Prime EDA Netlist Writer    Info: Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition    Info: Copyright (C) 2018  Intel Corporation. All rights reserved.    Info: Your use of Intel Corporation's design tools, logic functions     Info: and other software and tools, and its AMPP partner logic     Info: functions, and any output files from any of the foregoing     Info: (including device programming or simulation files), and any     Info: associated documentation or information are expressly subject     Info: to the terms and conditions of the Intel Program License     Info: Subscription Agreement, the Intel Quartus Prime License Agreement,    Info: the Intel FPGA IP License Agreement, or other applicable license    Info: agreement, including, without limitation, that your use is for    Info: the sole purpose of programming logic devices manufactured by    Info: Intel and sold by Intel or its authorized distributors.  Please    Info: refer to the applicable agreement for further details.    Info: Processing started: Fri Dec 29 20:49:43 2023Info: Command: quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off serializer -c serializer --vector_source=/home/vladimir/NTC/serialaizer/quartus_prj/Waveform.vwf --testbench_file=/home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim/Waveform.vwf.vtWarning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Completed successfully. 
+
+Completed successfully. 
+
+**** Generating the functional simulation netlist ****
+
+quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="/home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim/" serializer -c serializer
+
+Info: *******************************************************************Info: Running Quartus Prime EDA Netlist Writer    Info: Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition    Info: Copyright (C) 2018  Intel Corporation. All rights reserved.    Info: Your use of Intel Corporation's design tools, logic functions     Info: and other software and tools, and its AMPP partner logic     Info: functions, and any output files from any of the foregoing     Info: (including device programming or simulation files), and any     Info: associated documentation or information are expressly subject     Info: to the terms and conditions of the Intel Program License     Info: Subscription Agreement, the Intel Quartus Prime License Agreement,    Info: the Intel FPGA IP License Agreement, or other applicable license    Info: agreement, including, without limitation, that your use is for    Info: the sole purpose of programming logic devices manufactured by    Info: Intel and sold by Intel or its authorized distributors.  Please    Info: refer to the applicable agreement for further details.    Info: Processing started: Fri Dec 29 20:49:45 2023Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory=/home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim/ serializer -c serializerWarning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.Info (204019): Generated file serializer.vo in folder "/home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim//" for EDA simulation toolInfo: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning    Info: Peak virtual memory: 1094 megabytes    Info: Processing ended: Fri Dec 29 20:49:46 2023    Info: Elapsed time: 00:00:01    Info: Total CPU time (on all processors): 00:00:01
+Completed successfully. 
+
+**** Generating the ModelSim .do script ****
+
+/home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim/serializer.do generated.
+
+Completed successfully. 
+
+**** Running the ModelSim simulation ****
+
+/home/vladimir/intelFPGA_lite/18.1/modelsim_ase/linuxaloem//vsim -c -do serializer.do
+
+Reading pref.tcl
+# 10.5b
+# do serializer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:49:47 on Dec 29,2023# vlog -work work serializer.vo 
+# -- Compiling module serializer
+# 
+# Top level modules:# 	serializer# End time: 20:49:47 on Dec 29,2023, Elapsed time: 0:00:00# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:49:47 on Dec 29,2023# vlog -work work Waveform.vwf.vt 
+# -- Compiling module serializer_vlg_vec_tst
+# 
+# Top level modules:# 	serializer_vlg_vec_tst# End time: 20:49:47 on Dec 29,2023, Elapsed time: 0:00:00# Errors: 0, Warnings: 0
+# vsim -novopt -c -t 1ps -L cyclonev_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.serializer_vlg_vec_tst # Start time: 20:49:47 on Dec 29,2023# Loading work.serializer_vlg_vec_tst# Loading work.serializer# Loading cyclonev_ver.cyclonev_io_obuf# Loading cyclonev_ver.cyclonev_io_ibuf# Loading cyclonev_ver.cyclonev_clkena# Loading cyclonev_ver.cyclonev_lcell_comb# Loading altera_ver.dffeas# Loading altera_ver.PRIM_GDFF_LOW
+# after#25
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libpthread.so.0 : module was loaded at an absolute address.# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/librt.so.1 : module was loaded at an absolute address.# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libdl.so.2 : module was loaded at an absolute address.# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libm.so.6 : module was loaded at an absolute address.# ** Warning: (vsim-3116) Problem reading symbols from /lib/i386-linux-gnu/libc.so.6 : module was loaded at an absolute address.# ** Warning: (vsim-3116) Problem reading symbols from /lib/ld-linux.so.2 : module was loaded at an absolute address.# ** Note: $finish    : Waveform.vwf.vt(56)#    Time: 1 us  Iteration: 0  Instance: /serializer_vlg_vec_tst
+# End time: 20:49:47 on Dec 29,2023, Elapsed time: 0:00:00# Errors: 0, Warnings: 7
+Completed successfully. 
+
+**** Converting ModelSim VCD to vector waveform ****
+
+Reading /home/vladimir/NTC/serialaizer/quartus_prj/Waveform.vwf...
+
+Reading /home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim/serializer.msim.vcd...
+
+Processing channel transitions... 
+
+Writing the resulting VWF to /home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim/serializer_20231229204947.sim.vwf
+
+Finished VCD to VWF conversion.
+
+Completed successfully. 
+
+All completed.

@@ -1,0 +1,52 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/vladimir/NTC/serialaizer/quartus_prj/simulation/qsim
+vserializer
+Z1 !s110 1703872187
+!i10b 1
+!s100 g`f<[lY9ZCX7jAN27Yab40
+IPKPQ=C5`IGTC]^?=z^93H1
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1703872186
+8serializer.vo
+Fserializer.vo
+L0 31
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1703872187.000000
+!s107 serializer.vo|
+!s90 -work|work|serializer.vo|
+!i113 1
+Z5 o-work work
+Z6 tCvgOpt 0
+vserializer_vlg_vec_tst
+R1
+!i10b 1
+!s100 51HRdkidf6E9iR<H`aMKT2
+I8LgbC5>94LN=lf_?56F0o1
+R2
+R0
+w1703872184
+8Waveform.vwf.vt
+FWaveform.vwf.vt
+L0 29
+R3
+r1
+!s85 0
+31
+R4
+!s107 Waveform.vwf.vt|
+!s90 -work|work|Waveform.vwf.vt|
+!i113 1
+R5
+R6
