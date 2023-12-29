@@ -1,7 +1,7 @@
-/.vscode
-/quartus_prh/db
-/quartus_prh/incremental_db
-/quartus_prh/output_files
-/quartus_prh/simulation
-/quartus_prh/*.txt
-/quartus_prh/*.vwf
+./.vscode
+./quartus_prh/db
+./quartus_prh/incremental_db
+./quartus_prh/output_files
+./quartus_prh/simulation
+./quartus_prh/*.txt
+./quartus_prh/*.vwf
