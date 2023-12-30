@@ -87,6 +87,7 @@ module top_tb;
           display_error(tr.input_data, output_test_data, i);
         end
       end
+      output_test_data <= '0;
     end
     if ( test_succeed ) 
       $display( "Tests completed successfully!" );
