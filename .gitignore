@@ -8,3 +8,6 @@ simulation/
 .vscode/
 *.qws
 *.rpt
+work/
+*.wlf
+*.vstf
