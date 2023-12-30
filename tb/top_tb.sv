@@ -22,7 +22,7 @@ module top_tb;
 
   serializer #(
     .DATA_BUS_WIDTH ( DATA_BUS_WIDTH ),
-    .DATA_MOD_WIDTH ( DATA_MOD_WIDTH ),
+    .DATA_MOD_WIDTH ( DATA_MOD_WIDTH )
   ) DUT ( 
     .clk_i          ( clk            ),
     .srst_i         ( srst           ),
@@ -75,8 +75,9 @@ module top_tb;
       data_mod <= tr.size;
       // Wait for DUT to read data at posedge
       @( posedge clk );
+      data_val <= 0;
 
-      for ( int i = 0; i < (tr.size != 0 ? tr.size : DATA_BUS_WIDTH - 1); i++ ) begin
+      for ( int i = 0; i < ( tr.size != 0 ? tr.size : DATA_BUS_WIDTH ); i++ ) begin
         // wait for next posedge to read data
         @( posedge clk) ;
         if ( ser_data_val ) 

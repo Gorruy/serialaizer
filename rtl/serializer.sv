@@ -47,7 +47,7 @@ module serializer #(
         end
 
         WORK_S: begin
-          if (counter == final_index + 4'b1) 
+          if (counter == final_index) 
             next_state = IDLE_S;
           else 
             next_state = WORK_S;
@@ -59,13 +59,15 @@ module serializer #(
   always_ff @( posedge clk_i ) 
     begin
       if ( state == IDLE_S ) 
+        // Reset counter before transaction
         counter <= DATA_MOD_WIDTH'(DATA_BUS_WIDTH - 1);
+      // transaction started, valid data on bus
       if ( state == IDLE_S && next_state == WORK_S ) begin
         data_buf <= data_i;
         if ( !data_mod_i ) 
           final_index <= 0;
         else 
-          final_index <= DATA_MOD_WIDTH'(DATA_BUS_WIDTH - 1) - data_mod_i;
+          final_index <= DATA_MOD_WIDTH'(DATA_BUS_WIDTH - data_mod_i);
       end 
       else if ( next_state == WORK_S || state == WORK_S ) 
         counter <= counter - 4'b1;
