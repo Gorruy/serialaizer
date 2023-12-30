@@ -1,7 +1,7 @@
 module serializer #(
   // This module will accept parallel data
   // and start putting serialized data at the 
-  // next clock cylce, starting with MSB
+  // next posedge, starting with MSB
   parameter DATA_BUS_WIDTH = 16,
   parameter DATA_MOD_WIDTH = 4
 )(
