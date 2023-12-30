@@ -1,6 +1,9 @@
 module serializer #(
-  parameter DATA_BUS_WIDTH = 16;
-  parameter DATA_MOD_WIDTH = 4;
+  // This module will accept parallel data
+  // and start putting serialized data at the 
+  // next clock cylce, starting with MSB
+  parameter DATA_BUS_WIDTH = 16,
+  parameter DATA_MOD_WIDTH = 4
 )(
   input  logic                        clk_i,
   input  logic                        srst_i,
@@ -18,7 +21,7 @@ module serializer #(
                      WORK_S } state, next_state;
 
   logic [ 3:0] counter;
-  logic [ 3:0] final_index;
+  logic [ 3:0] final_index; // will hold index till wich serial data sended
   logic [15:0] data_buf;
 
   always_ff @( posedge clk_i ) 
@@ -34,6 +37,7 @@ module serializer #(
       next_state = state;
       case ( state )
         IDLE_S: begin
+          // ignoring transaction's sizes of 1 and 2 bits
           if (data_mod_i == 1 || data_mod_i == 2) 
             next_state = IDLE_S;
           else if (data_val_i) 
@@ -55,13 +59,13 @@ module serializer #(
   always_ff @( posedge clk_i ) 
     begin
       if ( state == IDLE_S ) 
-        counter <= DATA_BUS_WIDTH - 1;
+        counter <= DATA_MOD_WIDTH'(DATA_BUS_WIDTH - 1);
       if ( state == IDLE_S && next_state == WORK_S ) begin
         data_buf <= data_i;
         if ( !data_mod_i ) 
           final_index <= 0;
         else 
-          final_index <= DATA_BUS_WIDTH - 1 - data_mod_i;
+          final_index <= DATA_MOD_WIDTH'(DATA_BUS_WIDTH - 1) - data_mod_i;
       end 
       else if ( next_state == WORK_S || state == WORK_S ) 
         counter <= counter - 4'b1;
