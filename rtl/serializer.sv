@@ -42,8 +42,8 @@ module serializer (
 
   // Set counter and data buffer
   always_ff @(posedge clk_i) begin
+    if (state == IDLE_S) counter <= 4'd15;
     if (state == IDLE_S && next_state == WORK_S) begin
-      counter <= 4'd15;
       data_buf <= data_i;
       if (!data_mod_i) final_index <= 0;
       else final_index <= 4'd15 - data_mod_i;

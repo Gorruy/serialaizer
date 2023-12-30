@@ -1,6 +1,6 @@
 vlib work
 
-vlog -sv ../../rtl/serializer.sv
+vlog -sv ../rtl/serializer.sv
 vlog -sv top_tb.sv
 
 vsim -novopt top_tb
