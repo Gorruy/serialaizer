@@ -34,7 +34,7 @@ module serializer (
       end
 
       WORK_S: begin
-        if (counter == final_index) next_state = IDLE_S;
+        if (counter == final_index + 4'b1) next_state = IDLE_S;
         else next_state = WORK_S;
       end
     endcase
@@ -46,7 +46,7 @@ module serializer (
       counter <= 4'd15;
       data_buf <= data_i;
       if (!data_mod_i) final_index <= 0;
-      else final_index <= 4'd16 - data_mod_i;
+      else final_index <= 4'd15 - data_mod_i;
     end else if (next_state == WORK_S || state == WORK_S) counter <= counter - 4'b1;
   end
 
