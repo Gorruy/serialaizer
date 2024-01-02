@@ -1,0 +1,28 @@
+module serializer_top (
+    input  logic                        clk_i,
+    input  logic                        srst_i,
+    input  logic [DATA_BUS_WIDTH - 1:0] data_i,
+    input  logic [DATA_MOD_WIDTH - 1:0] data_mod_i,
+    input  logic                        data_val_i,
+    output logic                        ser_data_o,
+    output logic                        ser_data_val_o,
+    output logic                        busy_o
+);
+
+  logic srst;
+  logic [15:0] data;
+  logic [3:0] data_mod;
+  logic data_val;
+  logic ser_data;
+  logic ser_data_val;
+  logic busy;
+
+  serializer_impl #(
+    .DATA_BUS_WIDTH (32),
+    .DATA_MOD_WIDTH (4 )
+  ) serializer (
+    .clk_i (clk_i)
+  )
+
+
+endmodule

@@ -11,3 +11,4 @@ simulation/
 work/
 *.wlf
 *.vstf
+*.out.sdc
