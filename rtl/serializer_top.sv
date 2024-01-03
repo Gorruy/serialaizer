@@ -1,12 +1,14 @@
 module serializer_top (
-    input  logic                        clk_i,
-    input  logic                        srst_i,
-    input  logic [DATA_BUS_WIDTH - 1:0] data_i,
-    input  logic [DATA_MOD_WIDTH - 1:0] data_mod_i,
-    input  logic                        data_val_i,
-    output logic                        ser_data_o,
-    output logic                        ser_data_val_o,
-    output logic                        busy_o
+    input  logic        clk_i,
+    input  logic        srst_i,
+
+    input  logic [15:0] data_i,
+    input  logic [3:0]  data_mod_i,
+    input  logic        data_val_i,
+
+    output logic        ser_data_o,
+    output logic        ser_data_val_o,
+    output logic        busy_o
 );
 
   logic        srst;
@@ -28,27 +30,27 @@ module serializer_top (
     end 
 
   serializer #(
-    .DATA_BUS_WIDTH (32),
-    .DATA_MOD_WIDTH (4 )
+    .DATA_BUS_WIDTH ( 16           ),
+    .DATA_MOD_WIDTH ( 4            )
   ) serializer (
-    .clk_i          ( clk_i    ),
-    .srst_i         ( srst     ),
+    .clk_i          ( clk_i        ),
+    .srst_i         ( srst         ),
 
-    .data_mod_i     ( data_mod ),
-    .data_i         ( data     ),
-    .data_val_i     ( data_val ),
+    .data_mod_i     ( data_mod     ),
+    .data_i         ( data         ),
+    .data_val_i     ( data_val     ),
 
-    .ser_data_o     ( ser_data ),
-    .ser_data_val_o ( ser_data ),
-    .busy_o         ( busy     )    
+    .ser_data_o     ( ser_data     ),
+    .ser_data_val_o ( ser_data_val ),
+    .busy_o         ( busy         )    
 );
 
-alwas_ff @( posedge clk_i )
-  begin
-    ser_data_o     <= ser_data;
-    ser_data_val_o <= ser_data_val;
-    busy_o         <= busy; 
-  end
+  always_ff @( posedge clk_i )
+    begin
+      ser_data_o     <= ser_data;
+      ser_data_val_o <= ser_data_val;
+      busy_o         <= busy; 
+    end
 
 
 endmodule

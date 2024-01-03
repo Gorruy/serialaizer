@@ -38,7 +38,7 @@ module serializer #(
       case ( state )
         IDLE_S: begin
           // ignoring transaction's sizes of 1 and 2 bits
-          if (data_mod_i == 1 || data_mod_i == 2) 
+          if ( data_mod_i == 1 || data_mod_i == 2 ) 
             next_state = IDLE_S;
           else if (data_val_i) 
             next_state = WORK_S;
@@ -80,8 +80,8 @@ module serializer #(
   always_ff @( posedge clk_i ) 
     begin
       if ( state == IDLE_S )
-        counter <= DATA_BUS_WIDTH'( DATA_MOD_WIDTH - 1 );
-      else if ( state == WORK_S || data_val_i == 1)
+        counter <= ( DATA_MOD_WIDTH )'( DATA_MOD_WIDTH - 1 );
+      else if ( state == WORK_S || data_val_i == 1'b1 )
         counter <= counter - 4'b1;  
     end
 
@@ -94,37 +94,37 @@ module serializer #(
 
   always_ff @( posedge clk_i )
     begin
-      if ( state == IDLE_S && data_val_i == 1 ) begin
+      if ( state == IDLE_S && data_val_i == 1'b1 ) begin
         if ( !data_mod_i ) 
-          final_index <= 0;
+          final_index <= 1'b0;
         else 
-          final_index <= DATA_MOD_WIDTH'( DATA_BUS_WIDTH - data_mod_i );
+          final_index <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - data_mod_i );
       end
     end
 
   always_comb 
     begin
-      ser_data_o     = '0;
-      ser_data_val_o = 0;
-      busy_o         = 0;
+      ser_data_o     = 1'b0;
+      ser_data_val_o = 1'b0;
+      busy_o         = 1'b0;
       case ( state )
         IDLE_S: begin
-          ser_data_o     = '0;
-          ser_data_val_o = 0;
-          busy_o         = 0;
+          ser_data_o     = 1'b0;
+          ser_data_val_o = 1'b0;
+          busy_o         = 1'b0;
         end
 
         WORK_S: begin
-          busy_o         = 1;
-          ser_data_val_o = 1;
+          busy_o         = 1'b1;
+          ser_data_val_o = 1'b1;
           // Msb go first
           ser_data_o     = data_buf[counter];
         end
 
         default: begin
-          ser_data_o     = DATA_BUS_WIDTH'hx;
-          ser_data_val_o = 1'hx;
-          busy_o         = 1'hx;
+          ser_data_o     = 1'b0;
+          ser_data_val_o = 1'b0;
+          busy_o         = 1'b0;
         end
       endcase
     end
