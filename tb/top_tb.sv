@@ -20,7 +20,7 @@ module top_tb;
   // flag to indicate if there is an error
   bit test_succeed;
 
-  serializer_impl #(
+  serializer #(
     .DATA_BUS_WIDTH ( DATA_BUS_WIDTH ),
     .DATA_MOD_WIDTH ( DATA_MOD_WIDTH )
   ) DUT ( 

@@ -1,4 +1,4 @@
-module serializer_impl #(
+module serializer #(
   // This module will accept parallel data
   // and start putting serialized data at the 
   // next posedge, starting with MSB
