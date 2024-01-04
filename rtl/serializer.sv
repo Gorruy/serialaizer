@@ -11,7 +11,6 @@ module serializer #(
   input  logic [DATA_BUS_WIDTH - 1:0] data_i,
   input  logic [DATA_MOD_WIDTH - 1:0] data_mod_i,
   input  logic                        data_val_i,
-
   output logic                        ser_data_o,
   output logic                        ser_data_val_o,
   output logic                        busy_o
