@@ -39,8 +39,9 @@ module top_tb;
   );
 
   mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data = new();
-  mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size = new();
   mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) output_data = new();
+  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) generated_data = new();
+  mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size = new();
 
   function void display_error( input logic [DATA_BUS_WIDTH - 1:0] in,  
                                input logic [DATA_BUS_WIDTH - 1:0] out,  
@@ -71,7 +72,7 @@ module top_tb;
     
   endtask
 
-  task generate_transaction ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
+  task generate_transaction ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) generated_data,
                               mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size
                             );
     
@@ -81,19 +82,21 @@ module top_tb;
     data_to_send = $urandom_range( DATA_BUS_WIDTH**2 - 1, 0 );
     size_to_send = $urandom_range( DATA_MOD_WIDTH**2 - 1, 0 );
 
-    input_data.put(data_to_send);
+    generated_data.put(data_to_send);
     size.put(size_to_send);
 
   endtask
 
   task send_data ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
+                   mailbox #( logic [DATA_BUS_WIDTH - 1:0]) generated_data,
                    mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size
                  );
     
     logic [DATA_BUS_WIDTH - 1:0] data_to_send;
     logic [DATA_BUS_WIDTH - 1:0] size_to_send;
 
-    input_data.peek( data_to_send );
+    generated_data.get( data_to_send );
+    input_data.put( data_to_send );
     size.get( size_to_send );
 
     data     <= data_to_send;
