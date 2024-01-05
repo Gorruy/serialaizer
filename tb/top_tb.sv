@@ -1,6 +1,6 @@
 module top_tb;
 
-  parameter NUMBER_OF_TEST_RUNS = 100;
+  parameter NUMBER_OF_TEST_RUNS = 1000;
   parameter DATA_BUS_WIDTH      = 16;
   parameter DATA_MOD_WIDTH      = 4;
 
@@ -49,21 +49,34 @@ module top_tb;
     .data_mod_i     ( data_mod       )
   );
 
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data = new();
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) output_data = new();
+  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data     = new();
+  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) output_data    = new();
   mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) generated_data = new();
-  mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size = new();
+  mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size           = new();
 
   function void display_error( input logic [DATA_BUS_WIDTH - 1:0] in,  
                                input logic [DATA_BUS_WIDTH - 1:0] out,  
-                               input int                          index
+                               input int                          size
                              );
-
-    for ( int i = 0; i <= index; i++ )
-      $display( "expected values:%b, result value:%b till %d", in, out, index );
-      test_succeed <= 1'b0;
+    for ( int i = 0; i < DATA_BUS_WIDTH - size; i++)
+      in[i] = 0;
+    $display( "expected values:%b, result value:%b", in, out);
 
   endfunction
+
+  task raise_transaction_strobes( logic [DATA_BUS_WIDTH - 1:0] data_to_send,
+                           logic [DATA_MOD_WIDTH - 1:0] size_to_send
+                         ); 
+
+    data     <= data_to_send;
+    data_mod <= size_to_send;
+    data_val <= 1'b1;
+    # 10;
+    data     <= '0;
+    data_mod <= '0;
+    data_val <= '0; 
+
+  endtask
 
   task compare_data( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
                      mailbox #( logic [DATA_BUS_WIDTH - 1:0]) output_data,
@@ -74,12 +87,16 @@ module top_tb;
     logic [DATA_BUS_WIDTH - 1:0] i_data, o_data;
 
     output_data.get( o_data );
-    input_data.get( i_data );
     size.get( tr_size );
+    input_data.get( i_data );
     
-    for ( int i = DATA_BUS_WIDTH; i > ( tr_size == 4'b0 ? 0: DATA_BUS_WIDTH - tr_size ); i-- ) begin
+    for ( int i = DATA_BUS_WIDTH; i > ( tr_size == 0 ? 0: DATA_BUS_WIDTH - tr_size ); i-- ) begin
       if ( i_data[i - 1] != o_data[i - 1] )
-        display_error( i_data, o_data, i );
+        begin
+          display_error( i_data, o_data, tr_size );
+          test_succeed <= 1'b0;
+          return;
+        end
     end
     
   endtask
@@ -91,8 +108,8 @@ module top_tb;
     logic [DATA_BUS_WIDTH - 1:0] data_to_send;
     logic [DATA_MOD_WIDTH - 1:0] size_to_send;
 
-    data_to_send = $urandom_range( DATA_BUS_WIDTH**2 - 1, 0 );
-    size_to_send = $urandom_range( DATA_MOD_WIDTH**2 - 1, 0 );
+    data_to_send = $urandom_range( DATA_BUS_WIDTH**2 - 1, 'b1111111111 );
+    size_to_send = $urandom_range( DATA_MOD_WIDTH**2 - 1, 3 ) * $urandom_range(1, 0);
 
     generated_data.put(data_to_send);
     size.put(size_to_send);
@@ -107,19 +124,11 @@ module top_tb;
     logic [DATA_BUS_WIDTH - 1:0] data_to_send;
     logic [DATA_BUS_WIDTH - 1:0] size_to_send;
 
-    wait( !busy );
-
     generated_data.get( data_to_send );
     input_data.put( data_to_send );
     size.peek( size_to_send );
 
-    data     <= data_to_send;
-    data_mod <= size_to_send;
-    data_val <= 1'b1;
-    # 10;
-    data     <= '0;
-    data_mod <= '0;
-    data_val <= '0; 
+    raise_transaction_strobes( data_to_send, size_to_send );
 
   endtask
 
@@ -133,22 +142,45 @@ module top_tb;
     recieved_data <= '0;
     size.peek(tr_size);    
     
-    if ( tr_size != DATA_MOD_WIDTH'd1 || tr_size != DATA_MOD_WIDTH'd2 )
-      begin 
-        @( posedge ser_data_val );
-
-        for ( int i = 0; i < ( tr_size != 0? tr_size: DATA_BUS_WIDTH ); i++ ) begin
-          @( posedge clk );
-          if ( ser_data_val == 1'b1 )
-            recieved_data[DATA_BUS_WIDTH - 1 - i] <= ser_data;
-        end
-      end
+    @( posedge ser_data_val );
+    for ( int i = 0; i < ( tr_size != 0? tr_size: DATA_BUS_WIDTH ); i++ ) begin
+      @( posedge clk );
+      recieved_data[DATA_BUS_WIDTH - 1 - i] = ser_data;
+    end
 
     output_data.put(recieved_data);
 
   endtask
 
+  task one_two_sizes_check;
+    logic [DATA_BUS_WIDTH - 1:0] data_to_send;
+    logic [DATA_MOD_WIDTH - 1:0] size_to_send;
+
+    data_to_send = '1;  
+    
+    size_to_send = 1;
+    raise_transaction_strobes( data_to_send, size_to_send );
+    #10
+    if ( ser_data_val == 1 )
+      begin
+        $display("Error occures! Transaction of size one activates DUT!");
+        test_succeed <= 0;
+      end
+      
+    size_to_send = 2;
+    raise_transaction_strobes( data_to_send, size_to_send );
+    #10
+    if ( ser_data_val == 1 )
+      begin
+        $display("Error occures! Transaction of size two activates DUT!");
+        test_succeed <= 0;
+      end
+
+  endtask
+
   initial begin
+    test_succeed <= 1;
+
     $display("Simulation started!");
     wait( srst_done );
 
@@ -161,7 +193,13 @@ module top_tb;
         compare_data( input_data, output_data, size );
       join
     end
+
+    one_two_sizes_check();
+
     $display("Simulation is over!");
+    if ( test_succeed )
+      $display("All tests passed!");
+    $stop();
   end
 
 
