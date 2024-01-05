@@ -97,9 +97,9 @@ module serializer #(
         end
 
         default: begin
-          ser_data_o     = 1'b0;
-          ser_data_val_o = 1'b0;
-          busy_o         = 1'b0;
+          ser_data_o     = 'x;
+          ser_data_val_o = 'x;
+          busy_o         = 'x;
         end
       endcase
     end
