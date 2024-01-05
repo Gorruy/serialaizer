@@ -18,13 +18,13 @@
 #
 # Quartus Prime
 # Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
-# Date created = 16:16:58  декабря 28, 2023
+# Date created = 11:15:55  января 05, 2024
 #
 # -------------------------------------------------------------------------- #
 
 QUARTUS_VERSION = "18.1"
-DATE = "16:16:58  декабря 28, 2023"
+DATE = "11:15:55  января 05, 2024"
 
 # Revisions
 
-PROJECT_REVISION = "serializer"
+PROJECT_REVISION = "serializer_top"
