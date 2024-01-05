@@ -32,7 +32,7 @@ module serializer_top (
   serializer #(
     .DATA_BUS_WIDTH ( 16           ),
     .DATA_MOD_WIDTH ( 4            )
-  ) serializer_ins  (
+  ) serializer_ins (
     .clk_i          ( clk_i        ),
     .srst_i         ( srst         ),
 
@@ -51,5 +51,6 @@ module serializer_top (
       ser_data_val_o <= ser_data_val;
       busy_o         <= busy; 
     end
+
 
 endmodule
