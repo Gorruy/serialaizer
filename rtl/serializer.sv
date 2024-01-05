@@ -74,11 +74,11 @@ module serializer #(
           final_index <= 1'b0; // all data to be transferred
         else 
           final_index <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - data_mod_i );
-      else begin
+      end else if ( state == IDLE_S ) begin
         data_buf    <= '0;
-        fianl_index <= 0;
+        final_index <= 0;
       end
-      end
+
     end
 
   always_comb 
