@@ -75,7 +75,7 @@ module top_tb;
     data     <= data_to_send;
     data_mod <= size_to_send;
     data_val <= 1'b1;
-    # 10;
+    ## 1;
     data     <= '0;
     data_mod <= '0;
     data_val <= '0; 
