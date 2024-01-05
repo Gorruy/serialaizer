@@ -52,17 +52,24 @@ module top_tb;
 
   endfunction
 
-  function void compare_data( logic [DATA_BUS_WIDTH - 1:0] input_data,
-                              logic [DATA_MOD_WIDTH - 1:0] size,
-                              logic [DATA_BUS_WIDTH - 1:0] output_data
-                            );
+  task compare_data( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
+                     mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size,
+                     mailbox #( logic [DATA_BUS_WIDTH - 1:0]) output_data
+                   );
+    
+    logic [DATA_MOD_WIDTH - 1:0] tr_size;
+    logic [DATA_BUS_WIDTH - 1:0] i_data, o_data;
 
-    for ( int i = 0; i < size; i++ ) begin
+    output_data.get( o_data );
+    input_data.get( i_data );
+    size.get( tr_size );
+    
+    for ( int i = 0; i < tr_size; i++ ) begin
       if ( input_data[i] != output_data[i] )
-        display_error( input_data, output_data, i );
+        display_error( i_data, o_data, i );
     end
     
-  endfunction
+  endtask
 
   task generate_transaction ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
                               mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size
@@ -86,7 +93,7 @@ module top_tb;
     logic [DATA_BUS_WIDTH - 1:0] data_to_send;
     logic [DATA_BUS_WIDTH - 1:0] size_to_send;
 
-    input_data.get( data_to_send );
+    input_data.peek( data_to_send );
     size.get( size_to_send );
 
     data     <= data_to_send;
