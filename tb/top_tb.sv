@@ -16,7 +16,6 @@ module top_tb;
   logic                        ser_data_val;
   logic                        busy;
 
-
   // flag to indicate if there is an error
   bit test_succeed;
 
@@ -59,7 +58,7 @@ module top_tb;
                                input int                          size
                              );
     for ( int i = 0; i < DATA_BUS_WIDTH - size; i++)
-      in[i] = 0;
+      in[i] = 0; // assign 0 to not valid bits
     $display( "expected values:%b, result value:%b", in, out);
 
   endfunction
@@ -67,10 +66,11 @@ module top_tb;
   task raise_transaction_strobes( logic [DATA_BUS_WIDTH - 1:0] data_to_send,
                            logic [DATA_MOD_WIDTH - 1:0] size_to_send
                          ); 
-
+    
+    // data comes at random moment
     int delay;
-    delay = $urandom_range(20, 0);
-    #(delay);
+    delay = $urandom_range(10, 0);
+    ##(delay);
 
     data     <= data_to_send;
     data_mod <= size_to_send;

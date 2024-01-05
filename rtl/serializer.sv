@@ -71,7 +71,7 @@ module serializer #(
       if ( state == IDLE_S && data_val_i == 1'b1 ) begin
         data_buf <= data_i;
         if ( !data_mod_i ) 
-          final_index <= 1'b0;
+          final_index <= 1'b0; // all data to be transferred
         else 
           final_index <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - data_mod_i );
       end
