@@ -68,6 +68,10 @@ module top_tb;
                            logic [DATA_MOD_WIDTH - 1:0] size_to_send
                          ); 
 
+    int delay;
+    delay = $urandom_range(5, 0);
+    #(delay);
+
     data     <= data_to_send;
     data_mod <= size_to_send;
     data_val <= 1'b1;
