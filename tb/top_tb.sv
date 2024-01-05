@@ -69,7 +69,7 @@ module top_tb;
                          ); 
 
     int delay;
-    delay = $urandom_range(5, 0);
+    delay = $urandom_range(20, 0);
     #(delay);
 
     data     <= data_to_send;
