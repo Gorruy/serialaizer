@@ -48,10 +48,10 @@ module top_tb;
     .data_mod_i     ( data_mod       )
   );
 
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data     = new();
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) output_data    = new();
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) generated_data = new();
-  mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size           = new();
+  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data     = new(1);
+  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) output_data    = new(1);
+  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) generated_data = new(1);
+  mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size           = new(1);
 
   function void display_error( input logic [DATA_BUS_WIDTH - 1:0] in,  
                                input logic [DATA_BUS_WIDTH - 1:0] out,  
@@ -112,7 +112,7 @@ module top_tb;
     logic [DATA_BUS_WIDTH - 1:0] data_to_send;
     logic [DATA_MOD_WIDTH - 1:0] size_to_send;
 
-    data_to_send = $urandom_range( DATA_BUS_WIDTH**2 - 1, 'b1111111111 );
+    data_to_send = $urandom_range( DATA_BUS_WIDTH**2 - 1, 0 );
     size_to_send = $urandom_range( DATA_MOD_WIDTH**2 - 1, 3 ) * $urandom_range(1, 0);
 
     generated_data.put(data_to_send);
@@ -164,7 +164,7 @@ module top_tb;
     
     size_to_send = 1;
     raise_transaction_strobes( data_to_send, size_to_send );
-    #10
+    ##2
     if ( ser_data_val == 1 )
       begin
         $display("Error occures! Transaction of size one activates DUT!");
@@ -173,7 +173,7 @@ module top_tb;
       
     size_to_send = 2;
     raise_transaction_strobes( data_to_send, size_to_send );
-    #10
+    ##2
     if ( ser_data_val == 1 )
       begin
         $display("Error occures! Transaction of size two activates DUT!");
