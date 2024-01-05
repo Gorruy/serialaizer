@@ -62,7 +62,7 @@ module serializer #(
     begin
       if ( state == IDLE_S )
         counter <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - 1 );
-      else if ( state == WORK_S || data_val_i == 1'b1 )
+      else
         counter <= counter - 4'b1;  
     end
 
