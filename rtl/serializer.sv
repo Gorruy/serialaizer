@@ -2,8 +2,8 @@ module serializer #(
   // This module will accept parallel data
   // and start putting serialized data at the 
   // next posedge, starting with MSB
-  parameter DATA_BUS_WIDTH = 16,
-  parameter DATA_MOD_WIDTH = 4
+  parameter DATA_BUS_WIDTH,
+  parameter DATA_MOD_WIDTH
 )(
   input  logic                        clk_i,
   input  logic                        srst_i,

@@ -64,8 +64,8 @@ module top_tb;
   endfunction
 
   task raise_transaction_strobes( logic [DATA_BUS_WIDTH - 1:0] data_to_send,
-                           logic [DATA_MOD_WIDTH - 1:0] size_to_send
-                         ); 
+                                  logic [DATA_MOD_WIDTH - 1:0] size_to_send
+                                ); 
     
     // data comes at random moment
     int delay;
