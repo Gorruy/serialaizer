@@ -26,7 +26,7 @@ module serializer_top (
       srst     <= srst_i;
       data     <= data_i;
       data_mod <= data_mod_i;
-      data_val <= data_val; 
+      data_val <= data_val_i; 
     end 
 
   serializer #(
