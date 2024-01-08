@@ -48,7 +48,7 @@ module top_tb;
     .data_mod_i     ( data_mod       )
   );
 
-  typedef logic output_data_t[$:DATA_BUS_WIDTH];
+  typedef logic output_data_t[$:DATA_BUS_WIDTH - 1];
 
   mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data     = new(1);
   mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) generated_data = new(1);
@@ -59,8 +59,8 @@ module top_tb;
   function void display_error( input logic [DATA_BUS_WIDTH - 1:0] in,  
                                input output_data_t out
                              );
-    for ( int i = 0; i < DATA_BUS_WIDTH - out.size(); i++)
-      in[i] = 0; // assign 0 to not valid bits
+    for ( int i = 1; i < DATA_BUS_WIDTH - out.size() - 1; i++)
+      in[i - 1] = 0; // assign 0 to not valid bits
     $display( "expected values:%b, result value:%p", in, out);
 
   endfunction
@@ -94,10 +94,10 @@ module top_tb;
 
     output_data.get( o_data );
     input_data.get( i_data );
-    index = DATA_BUS_WIDTH - 1;
+    index = 0;
     
-    while ( o_data.size() != 0 ) begin
-      if ( i_data[index--] != o_data.pop_front() )
+    while ( index++ != o_data.size() ) begin
+      if ( i_data[DATA_BUS_WIDTH - index - 1] != o_data[index] )
         begin
           display_error( i_data, o_data );
           test_succeed <= 1'b0;
@@ -141,11 +141,17 @@ module top_tb;
   task read_data ( mailbox #( output_data_t ) output_data );
     
     output_data_t recieved_data;
+        
+    // reinitialize empty queue
+    recieved_data = {};
     
     @( posedge ser_data_val );
-    while ( ser_data_val ) begin
+    while ( 1 ) begin
       @( posedge clk );
-      recieved_data.push_back(ser_data);
+      if ( ser_data_val == '1 )
+        recieved_data.push_back(ser_data);
+      else 
+        break;
     end
 
     output_data.put(recieved_data);
@@ -157,7 +163,7 @@ module top_tb;
     logic [DATA_MOD_WIDTH - 1:0] size_to_send;
 
     data_to_send = '1;  
-    
+
     size_to_send = 1;
     raise_transaction_strobes( data_to_send, size_to_send );
     ##2
