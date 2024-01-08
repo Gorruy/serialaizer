@@ -12,3 +12,4 @@ work/
 *.wlf
 *.vstf
 *.out.sdc
+.qsys_edit/
