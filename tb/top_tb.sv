@@ -47,33 +47,35 @@ module top_tb;
     .data_val_i     ( data_val       ),
     .data_mod_i     ( data_mod       )
   );
+  
+  typedef struct {
+    logic [DATA_BUS_WIDTH - 1:0] data;
+    logic [DATA_MOD_WIDTH - 1:0] size;
+  } transaction_t;
 
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data     = new(1);
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) output_data    = new(1);
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) generated_data = new(1);
-  mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size           = new(1);
+  mailbox #( transaction_t ) input_transaction     = new(1);
+  mailbox #( transaction_t ) output_transaction    = new(1);
+  mailbox #( transaction_t ) generated_transaction = new(1);
 
-  function void display_error( input logic [DATA_BUS_WIDTH - 1:0] in,  
-                               input logic [DATA_BUS_WIDTH - 1:0] out,  
-                               input int                          size
+  function void display_error( input transaction_t in,  
+                               input transaction_t out
                              );
-    for ( int i = 0; i < DATA_BUS_WIDTH - size; i++)
-      in[i] = 0; // assign 0 to not valid bits
-    $display( "expected values:%b, result value:%b", in, out);
+    out.size = out.size != 0 ? out.size: 16;
+    for ( int i = 0; i < DATA_BUS_WIDTH - out.size; i++)
+      in.data[i] = 0; // assign 0 to not valid bits
+    $display( "expected values:%b, result value:%b", in.data, out.data);
 
   endfunction
 
-  task raise_transaction_strobes( logic [DATA_BUS_WIDTH - 1:0] data_to_send,
-                                  logic [DATA_MOD_WIDTH - 1:0] size_to_send
-                                ); 
+  task raise_transaction_strobes( input transaction_t transaction); 
     
     // data comes at random moment
     int delay;
     delay = $urandom_range(10, 0);
     ##(delay);
 
-    data     <= data_to_send;
-    data_mod <= size_to_send;
+    data     <= transaction.data;
+    data_mod <= transaction.size;
     data_val <= 1'b1;
     ## 1;
     data     <= '0;
@@ -82,22 +84,19 @@ module top_tb;
 
   endtask
 
-  task compare_data( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
-                     mailbox #( logic [DATA_BUS_WIDTH - 1:0]) output_data,
-                     mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size
+  task compare_data( mailbox #( transaction_t ) input_transaction,
+                     mailbox #( transaction_t ) output_transaction
                    );
     
-    logic [DATA_MOD_WIDTH - 1:0] tr_size;
-    logic [DATA_BUS_WIDTH - 1:0] i_data, o_data;
+    transaction_t i_tr, o_tr;
 
-    output_data.get( o_data );
-    size.get( tr_size );
-    input_data.get( i_data );
+    output_transaction.get( o_tr );
+    input_transaction.get( i_tr );
     
-    for ( int i = DATA_BUS_WIDTH; i > ( tr_size == 0 ? 0: DATA_BUS_WIDTH - tr_size ); i-- ) begin
-      if ( i_data[i - 1] != o_data[i - 1] )
+    for ( int i = DATA_BUS_WIDTH; i > ( o_tr.size == 0 ? 0: DATA_BUS_WIDTH - o_tr.size ); i-- ) begin
+      if ( i_tr.data[i - 1] != o_tr.data[i - 1] )
         begin
-          display_error( i_data, o_data, tr_size );
+          display_error( i_tr, o_tr );
           test_succeed <= 1'b0;
           return;
         end
@@ -105,65 +104,67 @@ module top_tb;
     
   endtask
 
-  task generate_transaction ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) generated_data,
-                              mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size
-                            );
+  task generate_transaction ( mailbox #( transaction_t ) generated_transaction );
     
     logic [DATA_BUS_WIDTH - 1:0] data_to_send;
     logic [DATA_MOD_WIDTH - 1:0] size_to_send;
+    transaction_t transaction_to_send;
 
     data_to_send = $urandom_range( DATA_BUS_WIDTH**2 - 1, 0 );
     size_to_send = $urandom_range( DATA_MOD_WIDTH**2 - 1, 3 ) * $urandom_range(1, 0);
+    transaction_to_send = {
+      data: data_to_send,
+      size: size_to_send
+    };
 
-    generated_data.put(data_to_send);
-    size.put(size_to_send);
-
-  endtask
-
-  task send_data ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
-                   mailbox #( logic [DATA_BUS_WIDTH - 1:0]) generated_data,
-                   mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size
-                 );
-
-    logic [DATA_BUS_WIDTH - 1:0] data_to_send;
-    logic [DATA_BUS_WIDTH - 1:0] size_to_send;
-
-    generated_data.get( data_to_send );
-    input_data.put( data_to_send );
-    size.peek( size_to_send );
-
-    raise_transaction_strobes( data_to_send, size_to_send );
+    generated_transaction.put(transaction_to_send);
 
   endtask
 
-  task read_data ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) output_data,
-                   mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size 
+  task send_data ( mailbox #( transaction_t ) input_transaction,
+                   mailbox #( transaction_t ) generated_transaction
                  );
+
+    transaction_t transaction_to_send;
+
+    generated_transaction.get( transaction_to_send );
+    input_transaction.put( transaction_to_send );
+
+    raise_transaction_strobes( transaction_to_send );
+
+  endtask
+
+  task read_data ( mailbox #( transaction_t ) output_transaction );
     
-    logic [DATA_BUS_WIDTH - 1:0] recieved_data;
-    logic [DATA_MOD_WIDTH - 1:0] tr_size;
+    transaction_t recieved_transaction;
+    int counter;
     
-    recieved_data <= '0;
-    size.peek(tr_size);    
+    recieved_transaction.data <= '0;
+    counter = 0;   
     
     @( posedge ser_data_val );
-    for ( int i = 0; i < ( tr_size != 0? tr_size: DATA_BUS_WIDTH ); i++ ) begin
+    while ( 1 ) begin
       @( posedge clk );
-      recieved_data[DATA_BUS_WIDTH - 1 - i] = ser_data;
+      if ( ser_data_val == '1 )
+        recieved_transaction.data[DATA_BUS_WIDTH - 1 - counter++] = ser_data;
+      else 
+        begin
+          recieved_transaction.size = counter;
+          break;
+        end
     end
 
-    output_data.put(recieved_data);
+    output_transaction.put(recieved_transaction);
 
   endtask
 
   task one_two_sizes_check;
-    logic [DATA_BUS_WIDTH - 1:0] data_to_send;
-    logic [DATA_MOD_WIDTH - 1:0] size_to_send;
+    transaction_t tr_to_send;
 
-    data_to_send = '1;  
+    tr_to_send.data = '1;  
     
-    size_to_send = 1;
-    raise_transaction_strobes( data_to_send, size_to_send );
+    tr_to_send.size = 1;
+    raise_transaction_strobes( tr_to_send );
     ##2
     if ( ser_data_val == 1 )
       begin
@@ -171,8 +172,8 @@ module top_tb;
         test_succeed <= 0;
       end
       
-    size_to_send = 2;
-    raise_transaction_strobes( data_to_send, size_to_send );
+    tr_to_send.size = 2;
+    raise_transaction_strobes( tr_to_send );
     ##2
     if ( ser_data_val == 1 )
       begin
@@ -191,10 +192,10 @@ module top_tb;
     repeat ( NUMBER_OF_TEST_RUNS )
     begin
       fork
-        generate_transaction( generated_data, size );
-        send_data( input_data, generated_data, size );
-        read_data( output_data, size );
-        compare_data( input_data, output_data, size );
+        generate_transaction( generated_transaction );
+        send_data( input_transaction, generated_transaction);
+        read_data( output_transaction );
+        compare_data( input_transaction, output_transaction);
       join
     end
 
