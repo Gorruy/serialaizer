@@ -148,7 +148,7 @@ module top_tb;
     @( posedge ser_data_val );
     while ( 1 ) begin
       @( posedge clk );
-      if ( ser_data_val == '1 )
+      if ( ser_data_val == 1 )
         recieved_data.push_back(ser_data);
       else 
         break;
