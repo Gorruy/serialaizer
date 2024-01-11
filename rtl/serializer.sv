@@ -39,7 +39,7 @@ module serializer #(
           // ignoring transaction's sizes of 1 and 2 bits
           if ( data_mod_i == 1 || data_mod_i == 2 ) 
             next_state = IDLE_S;
-          else if (data_val_i) 
+          else if ( data_val_i && busy_o != 1 ) 
             next_state = WORK_S;
           else 
             next_state = IDLE_S;
@@ -68,7 +68,7 @@ module serializer #(
 
   always_ff @( posedge clk_i )
     begin
-      if ( state == IDLE_S && data_val_i == 1'b1 ) begin
+      if ( state == IDLE_S && data_val_i == 1'b1 && busy_o != 1 ) begin
         data_buf <= data_i;
         if ( !data_mod_i ) 
           final_index <= 0; // all data to be transferred
