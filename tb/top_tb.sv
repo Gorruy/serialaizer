@@ -76,7 +76,7 @@ module top_tb;
 
     data     <= data_to_send;
     data_mod <= size_to_send;
-    data_val <= 1'b1;
+    data_val <= 1;
     ## 1;
     data     <= '0;
     data_mod <= '0;
@@ -100,7 +100,7 @@ module top_tb;
       if ( i_data[DATA_BUS_WIDTH - index - 1] != o_data[index] )
         begin
           display_error( i_data, o_data );
-          test_succeed <= 1'b0;
+          test_succeed <= 0;
           return;
         end
     end
