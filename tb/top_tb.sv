@@ -48,18 +48,20 @@ module top_tb;
     .data_mod_i     ( data_mod       )
   );
 
+  typedef logic output_data_t[$:DATA_BUS_WIDTH - 1];
+
   mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data     = new(1);
-  mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) output_data    = new(1);
   mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) generated_data = new(1);
   mailbox #( logic [DATA_MOD_WIDTH - 1:0] ) size           = new(1);
 
+  mailbox #( output_data_t ) output_data                   = new(1);
+
   function void display_error( input logic [DATA_BUS_WIDTH - 1:0] in,  
-                               input logic [DATA_BUS_WIDTH - 1:0] out,  
-                               input int                          size
+                               input output_data_t out
                              );
-    for ( int i = 0; i < DATA_BUS_WIDTH - size; i++)
-      in[i] = 0; // assign 0 to not valid bits
-    $display( "expected values:%b, result value:%b", in, out);
+    for ( int i = 1; i < DATA_BUS_WIDTH - out.size() - 1; i++)
+      in[i - 1] = 0; // assign 0 to not valid bits
+    $display( "expected values:%b, result value:%p", in, out);
 
   endfunction
 
@@ -74,7 +76,7 @@ module top_tb;
 
     data     <= data_to_send;
     data_mod <= size_to_send;
-    data_val <= 1'b1;
+    data_val <= 1;
     ## 1;
     data     <= '0;
     data_mod <= '0;
@@ -82,23 +84,23 @@ module top_tb;
 
   endtask
 
-  task compare_data( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) input_data,
-                     mailbox #( logic [DATA_BUS_WIDTH - 1:0]) output_data,
-                     mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size
+  task compare_data( mailbox #( logic [DATA_BUS_WIDTH - 1:0] ) input_data,
+                     mailbox #( output_data_t ) output_data
                    );
     
-    logic [DATA_MOD_WIDTH - 1:0] tr_size;
-    logic [DATA_BUS_WIDTH - 1:0] i_data, o_data;
+    logic [DATA_BUS_WIDTH - 1:0] i_data;
+    output_data_t o_data;
+    int index;
 
     output_data.get( o_data );
-    size.get( tr_size );
     input_data.get( i_data );
+    index = 0;
     
-    for ( int i = DATA_BUS_WIDTH; i > ( tr_size == 0 ? 0: DATA_BUS_WIDTH - tr_size ); i-- ) begin
-      if ( i_data[i - 1] != o_data[i - 1] )
+    while ( index++ != o_data.size() ) begin
+      if ( i_data[DATA_BUS_WIDTH - index - 1] != o_data[index] )
         begin
-          display_error( i_data, o_data, tr_size );
-          test_succeed <= 1'b0;
+          display_error( i_data, o_data );
+          test_succeed <= 0;
           return;
         end
     end
@@ -130,26 +132,26 @@ module top_tb;
 
     generated_data.get( data_to_send );
     input_data.put( data_to_send );
-    size.peek( size_to_send );
+    size.get( size_to_send );
 
     raise_transaction_strobes( data_to_send, size_to_send );
 
   endtask
 
-  task read_data ( mailbox #( logic [DATA_BUS_WIDTH - 1:0]) output_data,
-                   mailbox #( logic [DATA_MOD_WIDTH - 1:0]) size 
-                 );
+  task read_data ( mailbox #( output_data_t ) output_data );
     
-    logic [DATA_BUS_WIDTH - 1:0] recieved_data;
-    logic [DATA_MOD_WIDTH - 1:0] tr_size;
-    
-    recieved_data <= '0;
-    size.peek(tr_size);    
+    output_data_t recieved_data;
+        
+    // reinitialize empty queue
+    recieved_data = {};
     
     @( posedge ser_data_val );
-    for ( int i = 0; i < ( tr_size != 0? tr_size: DATA_BUS_WIDTH ); i++ ) begin
+    while ( 1 ) begin
       @( posedge clk );
-      recieved_data[DATA_BUS_WIDTH - 1 - i] = ser_data;
+      if ( ser_data_val == 1 )
+        recieved_data.push_back(ser_data);
+      else 
+        break;
     end
 
     output_data.put(recieved_data);
@@ -161,7 +163,7 @@ module top_tb;
     logic [DATA_MOD_WIDTH - 1:0] size_to_send;
 
     data_to_send = '1;  
-    
+
     size_to_send = 1;
     raise_transaction_strobes( data_to_send, size_to_send );
     ##2
@@ -193,8 +195,8 @@ module top_tb;
       fork
         generate_transaction( generated_data, size );
         send_data( input_data, generated_data, size );
-        read_data( output_data, size );
-        compare_data( input_data, output_data, size );
+        read_data( output_data );
+        compare_data( input_data, output_data );
       join
     end
 

@@ -39,7 +39,7 @@ module serializer #(
           // ignoring transaction's sizes of 1 and 2 bits
           if ( data_mod_i == 1 || data_mod_i == 2 ) 
             next_state = IDLE_S;
-          else if (data_val_i) 
+          else if ( data_val_i && busy_o != 1 ) 
             next_state = WORK_S;
           else 
             next_state = IDLE_S;
@@ -53,7 +53,7 @@ module serializer #(
         end
 
         default: begin
-          next_state = IDLE_S;
+          next_state = 'x;
         end
       endcase
     end
@@ -63,15 +63,15 @@ module serializer #(
       if ( state == IDLE_S )
         counter <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - 1 );
       else
-        counter <= counter - 4'b1;  
+        counter <= counter - ( DATA_MOD_WIDTH )'b1;  
     end
 
   always_ff @( posedge clk_i )
     begin
-      if ( state == IDLE_S && data_val_i == 1'b1 ) begin
+      if ( state == IDLE_S && data_val_i == 1'b1 && busy_o != 1 ) begin
         data_buf <= data_i;
         if ( !data_mod_i ) 
-          final_index <= 1'b0; // all data to be transferred
+          final_index <= 0; // all data to be transferred
         else 
           final_index <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - data_mod_i );
       end else if ( state == IDLE_S ) begin
@@ -83,19 +83,19 @@ module serializer #(
 
   always_comb 
     begin
-      ser_data_o     = 1'b0;
-      ser_data_val_o = 1'b0;
-      busy_o         = 1'b0;
+      ser_data_o     = 0;
+      ser_data_val_o = 0;
+      busy_o         = 0;
       case ( state )
         IDLE_S: begin
-          ser_data_o     = 1'b0;
-          ser_data_val_o = 1'b0;
-          busy_o         = 1'b0;
+          ser_data_o     = 0;
+          ser_data_val_o = 0;
+          busy_o         = 0;
         end
 
         WORK_S: begin
-          busy_o         = 1'b1;
-          ser_data_val_o = 1'b1;
+          busy_o         = 1;
+          ser_data_val_o = 1;
           // Msb go first
           ser_data_o     = data_buf[counter];
         end
