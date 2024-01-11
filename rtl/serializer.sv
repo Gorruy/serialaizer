@@ -94,8 +94,8 @@ module serializer #(
         end
 
         WORK_S: begin
-          busy_o         = 1'b1;
-          ser_data_val_o = 1'b1;
+          busy_o         = 1;
+          ser_data_val_o = 1;
           // Msb go first
           ser_data_o     = data_buf[counter];
         end
