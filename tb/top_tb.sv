@@ -92,6 +92,12 @@ module top_tb;
 
     output_transaction.get( o_tr );
     input_transaction.get( i_tr );
+
+    if ( o_tr.size != i_tr.size )
+      begin
+        display_error( i_tr, o_tr );
+        return; 
+      end
     
     for ( int i = DATA_BUS_WIDTH; i > ( o_tr.size == 0 ? 0: DATA_BUS_WIDTH - o_tr.size ); i-- ) begin
       if ( i_tr.data[i - 1] != o_tr.data[i - 1] )
