@@ -161,7 +161,7 @@ module top_tb;
     data_t data_to_send;
     data_t size_to_send;
 
-    data_to_send.push_back(1'b1);  
+    data_to_send.push_back(1);  
 
     raise_transaction_strobes( data_to_send );
     ##2
@@ -171,7 +171,7 @@ module top_tb;
         test_succeed <= 0;
       end
       
-    data_to_send.push_back(1'b1);
+    data_to_send.push_back(1);
     raise_transaction_strobes( data_to_send );
     ##2
     if ( ser_data_val == 1 )
