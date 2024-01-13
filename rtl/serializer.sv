@@ -16,8 +16,11 @@ module serializer #(
   output logic                        busy_o
 );
 
-  enum logic { IDLE_S,
-               WORK_S } state, next_state;
+  typedef enum logic [1:0] { IDLE_S,
+                             WORK_S,
+                             X='x } state_t;
+  
+  state_t state, next_state;
 
   logic [DATA_MOD_WIDTH - 1:0] counter;
   logic [DATA_MOD_WIDTH - 1:0] final_index; // will hold index till wich serial data sended
@@ -53,7 +56,7 @@ module serializer #(
         end
 
         default: begin
-          next_state = 'x;
+          next_state = X;
         end
       endcase
     end
@@ -63,7 +66,7 @@ module serializer #(
       if ( state == IDLE_S )
         counter <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - 1 );
       else
-        counter <= counter - ( DATA_MOD_WIDTH )'b1;  
+        counter <= counter - ( DATA_MOD_WIDTH )'(1);  
     end
 
   always_ff @( posedge clk_i )
