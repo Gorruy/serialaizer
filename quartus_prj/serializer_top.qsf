@@ -54,7 +54,7 @@ set_instance_assignment -name VIRTUAL_PIN ON -to data_i
 set_instance_assignment -name VIRTUAL_PIN ON -to srst_i
 set_instance_assignment -name VIRTUAL_PIN ON -to ser_data_val_o
 set_instance_assignment -name VIRTUAL_PIN ON -to ser_data_o
-set_location_assignment PIN_Y14 -to clk_i
+set_location_assignment PIN_C6 -to clk_i
 set_instance_assignment -name VIRTUAL_PIN ON -to data_val_i
 set_instance_assignment -name VIRTUAL_PIN ON -to busy_o
 set_instance_assignment -name VIRTUAL_PIN ON -to data_mod_i

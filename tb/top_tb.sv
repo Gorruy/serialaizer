@@ -97,7 +97,7 @@ module top_tb;
       end
     
     while ( index++ != o_data.size() ) begin
-      if ( i_data[index] != o_data[index] )
+      if ( i_data[index] !== o_data[index] )
         begin
           display_error( i_data, o_data );
           test_succeed <= 1'b0;
@@ -147,7 +147,7 @@ module top_tb;
     while ( 1 ) 
       begin
         @( posedge clk );
-        if ( ser_data_val == 1'b1 )
+        if ( ser_data_val === 1'b1 )
           recieved_data.push_front(ser_data);
         else 
           break;
@@ -165,7 +165,7 @@ module top_tb;
 
     raise_transaction_strobes( data_to_send );
     ##2
-    if ( ser_data_val == 1'b1 )
+    if ( ser_data_val === 1'b1 )
       begin
         $display("Error occures! Transaction of size one activates DUT!");
         test_succeed <= 1'b0;
@@ -174,7 +174,7 @@ module top_tb;
     data_to_send.push_back(1);
     raise_transaction_strobes( data_to_send );
     ##2
-    if ( ser_data_val == 1'b1 )
+    if ( ser_data_val === 1'b1 )
       begin
         $display("Error occures! Transaction of size two activates DUT!");
         test_succeed <= 1'b0;

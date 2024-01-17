@@ -42,7 +42,7 @@ module serializer #(
           if ( data_mod_i == (DATA_MOD_WIDTH)'(1) || 
                data_mod_i == (DATA_MOD_WIDTH)'(2) ) 
             next_state = IDLE_S;
-          else if ( data_val_i && busy_o != 1'b1 ) 
+          else if ( data_val_i && !busy_o ) 
             next_state = WORK_S;
           else 
             next_state = IDLE_S;
@@ -71,7 +71,7 @@ module serializer #(
 
   always_ff @( posedge clk_i )
     begin
-      if ( state == IDLE_S && data_val_i == 1'b1 && busy_o != 1'b1 ) begin
+      if ( state == IDLE_S && data_val_i && !busy_o ) begin
         data_buf <= data_i;
         if ( data_mod_i == '0 ) 
           final_index <= '0; // all data to be transferred
