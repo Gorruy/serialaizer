@@ -70,11 +70,11 @@ module top_tb;
 
     data_mod <= data_to_send.size() != 16? data_to_send.size(): 0;
     data     <= { << {data_to_send} };
-    data_val <= 1;
+    data_val <= 1'b1;
     ## 1;
     data     <= '0;
     data_mod <= '0;
-    data_val <= '0; 
+    data_val <= 1'b0; 
 
   endtask
 
@@ -100,7 +100,7 @@ module top_tb;
       if ( i_data[index] != o_data[index] )
         begin
           display_error( i_data, o_data );
-          test_succeed <= 0;
+          test_succeed <= 1'b0;
           return;
         end
     end
@@ -147,7 +147,7 @@ module top_tb;
     while ( 1 ) 
       begin
         @( posedge clk );
-        if ( ser_data_val == 1 )
+        if ( ser_data_val == 1'b1 )
           recieved_data.push_front(ser_data);
         else 
           break;
@@ -165,25 +165,25 @@ module top_tb;
 
     raise_transaction_strobes( data_to_send );
     ##2
-    if ( ser_data_val == 1 )
+    if ( ser_data_val == 1'b1 )
       begin
         $display("Error occures! Transaction of size one activates DUT!");
-        test_succeed <= 0;
+        test_succeed <= 1'b0;
       end
       
     data_to_send.push_back(1);
     raise_transaction_strobes( data_to_send );
     ##2
-    if ( ser_data_val == 1 )
+    if ( ser_data_val == 1'b1 )
       begin
         $display("Error occures! Transaction of size two activates DUT!");
-        test_succeed <= 0;
+        test_succeed <= 1'b0;
       end
 
   endtask
 
   initial begin
-    test_succeed <= 1;
+    test_succeed <= 1'b1;
 
     $display("Simulation started!");
     wait( srst_done );
