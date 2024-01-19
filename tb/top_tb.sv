@@ -68,13 +68,13 @@ module top_tb;
     delay = $urandom_range(10, 0);
     ##(delay);
 
-    data_mod <= data_to_send.size() != 16? data_to_send.size(): 0;
-    data     <= { << {data_to_send} };
-    data_val <= 1'b1;
+    data_mod = data_to_send.size() != 16? data_to_send.size(): 0;
+    data     = { << {data_to_send} };
+    data_val = 1'b1;
     ## 1;
-    data     <= '0;
-    data_mod <= '0;
-    data_val <= 1'b0; 
+    data     = '0;
+    data_mod = '0;
+    data_val = 1'b0; 
 
   endtask
 
@@ -100,7 +100,7 @@ module top_tb;
       if ( i_data[index] !== o_data[index] )
         begin
           display_error( i_data, o_data );
-          test_succeed <= 1'b0;
+          test_succeed = 1'b0;
           return;
         end
     end
@@ -167,7 +167,7 @@ module top_tb;
     ##2
     if ( ser_data_val === 1'b1 )
       begin
-        $display("Error occures! Transaction of size one activates DUT!");
+        $error("Error occures! Transaction of size one activates DUT!");
         test_succeed <= 1'b0;
       end
       
@@ -176,7 +176,7 @@ module top_tb;
     ##2
     if ( ser_data_val === 1'b1 )
       begin
-        $display("Error occures! Transaction of size two activates DUT!");
+        $error("Error occures! Transaction of size two activates DUT!");
         test_succeed <= 1'b0;
       end
 
