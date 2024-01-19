@@ -71,7 +71,7 @@ module serializer #(
 
   always_ff @( posedge clk_i )
     begin
-      if ( state == IDLE_S && data_val_i == 1'b1 && busy_o == 1'b0 ) begin
+      if ( ( state == IDLE_S ) && data_val_i && !busy_o ) begin
         data_buf <= data_i;
         if ( data_mod_i == '0 ) 
           final_index <= '0; // all data to be transferred
