@@ -71,17 +71,26 @@ module serializer #(
 
   always_ff @( posedge clk_i )
     begin
-      if ( ( state == IDLE_S ) && data_val_i && !busy_o ) begin
-        data_buf <= data_i;
-        if ( data_mod_i == '0 ) 
-          final_index <= '0; // all data to be transferred
-        else 
-          final_index <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - data_mod_i );
-      end else if ( state == IDLE_S ) begin
-        data_buf    <= '0;
-        final_index <= '0;
-      end
+      if ( state == IDLE_S )
+        begin
+          if ( data_val_i && !busy_o )
+            begin
+              if ( data_mod_i == '0 )
+                final_index <= '0;
+              else 
+                final_index <= ( DATA_MOD_WIDTH )'( DATA_BUS_WIDTH - data_mod_i );
+            end
+          else
+            final_index <= '0;
+        end
+    end
 
+  always_ff @( posedge clk_i )
+    begin
+      if ( ( state == IDLE_S ) && data_val_i && !busy_o )
+        data_buf <= data_i;
+      else if ( state == IDLE_S )
+        data_buf <= '0;
     end
 
   always_comb 
